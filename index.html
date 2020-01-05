@@ -192,6 +192,7 @@ var pub2 = new CalHeatMap();
 var pub3 = new CalHeatMap();
 var pub4 = new CalHeatMap();
 
+/*
 function createCheckbox(id){
 
     id=id.toUpperCase();
@@ -216,7 +217,7 @@ function createCheckbox(id){
     newTextBoxDiv.after().html('<label><input id="checkbox-'+id+'" type="checkbox" checked="">'+name+'</input></label>');
     newTextBoxDiv.appendTo("#checkBoxSection");
 }
-
+*/
 
 $('input:checkbox').change(
     function(){
@@ -232,22 +233,27 @@ $('input:checkbox').change(
                 var dateIs = new Date(dataJson[i].date);
                 var secondsIs = dateIs.getTime() / 1000;
 
-                var lastChars = stateL.substring(2, stateL.length);
+                var lastChars =  stateL.substring(2, stateL.length);
                 lastChars=lastChars.toUpperCase();
-
+                //console.log(lastChars);
                 if(selected_state=='all' || selected_state==stateCharacters){
 
-                    for(b=0;b<lastChars.length;b++){
-                        $('#TextBoxDiv-'+lastChars.charAt(b)).show();
-                    }
+                   // for(b=0;b<lastChars.length;b++){
+                       if(selected_state=='all' && lastChars.charAt(0)=='D'){
+
+                       }else{
+                            $('#TextBoxDiv-'+lastChars.charAt(0)).show();
+                       }
+                        
+                    //}
 
                     if(
-                        ($('#checkbox-S').is(":checked") && lastChars.indexOf('S') > -1) ||
-                        ($('#checkbox-D').is(":checked") && lastChars.indexOf('D') > -1) ||
-                        ($('#checkbox-M').is(":checked") && lastChars.indexOf('M') > -1) ||
-                        ($('#checkbox-E').is(":checked") && lastChars.indexOf('E') > -1) ||
-                        ($('#checkbox-W').is(":checked") && lastChars.indexOf('W') > -1) ||
-                        ($('#checkbox-N').is(":checked") && lastChars.indexOf('N') > -1) )
+                        ($('#checkbox-S').is(":checked") && lastChars.indexOf('SD') > -1) ||
+                        ($('#checkbox-D').is(":checked") && lastChars.charAt(0)=='D') ||  //lastChars.indexOf('D') > -1
+                        ($('#checkbox-M').is(":checked") && lastChars.indexOf('MD') > -1) ||
+                        ($('#checkbox-E').is(":checked") && lastChars.indexOf('ED') > -1) ||
+                        ($('#checkbox-W').is(":checked") && lastChars.indexOf('WD') > -1) ||
+                        ($('#checkbox-N').is(":checked") && lastChars.indexOf('ND') > -1) )
                         {
                         if(dataForInput[secondsIs]==undefined){
                             dataForInput[secondsIs] =  1;
@@ -266,7 +272,7 @@ $('input:checkbox').change(
      });
 
 
-
+     $('#TextBoxDiv-D').hide();
 function hideAllCheckbox(){
 
         $('#checkbox-S').prop('checked', true);
@@ -289,50 +295,8 @@ $(document).ready ( function(){ //START OF DOCUMENT READY FUNCTION
 
    //**********************************************************************************
     $("#states_field").change(function(){ //EVENT FOR THE DROP DOWN VALUE CHANGE
-        console.log('dsd');
         hideAllCheckbox();
-        $("#resultClick").html("");
-        var selected_state=$("#states_field  option:selected").val();
-        dataForInput=[];
-        //console.log("The text has been changed."+ selected_state);
-        for (var i = 0; i < dataJson.length; i++) {
-            if(dataJson[i].date != undefined ){
-                var stateL=dataJson[i].abbrev;
-                //*** making a string for the calender, that is how many events in specific date (array depends on the second of the event)
-                var stateCharacters = stateL.substring(0, 2).toUpperCase();
-                var dateIs = new Date(dataJson[i].date);
-                var secondsIs = dateIs.getTime() / 1000;
-
-                var lastChars = stateL.substring(2, stateL.length);
-                lastChars=lastChars.toUpperCase();
-
-                if(selected_state=='all' || selected_state==stateCharacters){
-
-                    for(b=0;b<lastChars.length;b++){
-                        $('#TextBoxDiv-'+lastChars.charAt(b)).show();
-                    }
-
-                    if(
-                        ($('#checkbox-S').is(":checked") && lastChars.indexOf('S') > -1) ||
-                        ($('#checkbox-D').is(":checked") && lastChars.indexOf('D') > -1) ||
-                        ($('#checkbox-M').is(":checked") && lastChars.indexOf('M') > -1) ||
-                        ($('#checkbox-E').is(":checked") && lastChars.indexOf('E') > -1) ||
-                        ($('#checkbox-W').is(":checked") && lastChars.indexOf('W') > -1) ||
-                        ($('#checkbox-N').is(":checked") && lastChars.indexOf('N') > -1) )
-                        {
-                        if(dataForInput[secondsIs]==undefined){
-                            dataForInput[secondsIs] =  1;
-                        }else{
-                            dataForInput[secondsIs] =  dataForInput[secondsIs] + 1;
-                        }
-                    }
-                }
-            }
-        }
-        pub1.update(dataForInput);
-        pub2.update(dataForInput);
-        pub3.update(dataForInput);
-        pub4.update(dataForInput);
+        $('input:checkbox').trigger('change');
     });
 //******************************************************************************************
 
@@ -354,16 +318,17 @@ $(document).ready ( function(){ //START OF DOCUMENT READY FUNCTION
                    }
                     //**** adding unique state in the drop down
                     var stateCharacters = stateL.substring(0, 2).toUpperCase();
+                   
                     var optionExists = ($('#states_field option[value=' + stateCharacters + ']').length > 0);
                     if(!optionExists)
                     {
                         $('#states_field').append("<option value="+stateCharacters+">"+stateList[stateCharacters]+"</option>");
                     }
                     $("#states_field").sortSelect();
-                    var lastChars = stateL.substring(2, stateL.length);
-                    for(b=0;b<lastChars.length;b++){
+                    //var lastChars = stateL.substring(2, stateL.length); 
+                   /* for(b=0;b<lastChars.length;b++){
                         createCheckbox(lastChars.charAt(b));
-                    }
+                    }*/
 
                }
             }
@@ -514,16 +479,16 @@ function clickCalender(date,nb){
                     var y1=date.getFullYear();
 
                     var eventNum=1;
-                    for (var i = 0; i < data.length; i++) {
+                    for (var i = 0; i < dataJson.length; i++) {
 
-                       if(data[i].date != undefined ){
-                            var dateTo=new Date(data[i].date);
+                       if(dataJson[i].date != undefined ){
+                            var dateTo=new Date(dataJson[i].date);
                             var d2=dateTo.getDate();
                             var m2=dateTo.getMonth();
                             var y2=dateTo.getFullYear();
                             if (d1 == d2 && m1==m2 && y1==y2) {
 
-                                var stateL=data[i].abbrev;
+                                var stateL=dataJson[i].abbrev;
                                 var stateCharacters = stateL.substring(0, 2).toUpperCase();
                                 var selected_state=$("#states_field  option:selected").val();
 
@@ -534,16 +499,16 @@ function clickCalender(date,nb){
 
                                     if(
                                         ($('#checkbox-S').is(":checked") && lastChars.indexOf('S') > -1) ||
-                                        ($('#checkbox-D').is(":checked") && lastChars.indexOf('D') > -1) ||
+                                        ($('#checkbox-D').is(":checked") && lastChars.charAt(0)=='D') ||
                                         ($('#checkbox-M').is(":checked") && lastChars.indexOf('M') > -1) ||
                                         ($('#checkbox-E').is(":checked") && lastChars.indexOf('E') > -1) ||
                                         ($('#checkbox-W').is(":checked") && lastChars.indexOf('W') > -1) ||
                                         ($('#checkbox-N').is(":checked") && lastChars.indexOf('N') > -1) )
                                         {
-                                            if(data[i].url == undefined){
+                                            if(dataJson[i].url == undefined){
                                                 $("#resultClick").append("<br> <span > no URL found to register for event " + eventNum  +"</span> ");
                                             }else{
-                                                $("#resultClick").append("<br> <a href='" + data[i].url +"'> Click to register event "+ eventNum  +"</a> ");
+                                                $("#resultClick").append("<br> <a href='" + dataJson[i].url +"'> Click to register event "+ eventNum  +"</a> ");
                                             }
                                             eventNum = eventNum+1;
                                         }
